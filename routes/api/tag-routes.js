@@ -21,13 +21,13 @@ router.get('/:id', async (req, res) => {
     // find a single tag by its `id`
     const tagData = await Tag.findByPk(req.params.id, {
       // include its associated Products data
-      include: [{model: ProductTag through: Product}]
+      include: [{model: Product, through: ProductTag}]
     });
     if (!tagData) {
       res.status(404).json({ message: 'No tag found with this id!' });
       return;
     }
-    res.status(200).json(tagDataData);
+    res.status(200).json(tagData);
   } catch (err) {
     res.status(500).json(err);
   }
@@ -46,7 +46,11 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
   // update a tag's name by its `id` value
   try {
-    const tagData = await Tag.update(req.body);
+    const tagData = await Tag.update(req.body, {
+      where: {
+        id: req.params.id
+      }
+    });
     res.status(200).json(tagData);
   } catch (err) {
     res.status(400).json(err);
